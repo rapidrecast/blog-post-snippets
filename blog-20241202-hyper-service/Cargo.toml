@@ -1,0 +1,11 @@
+[package]
+name = "blog-20241202-hyper-service"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+futures = "0.3.31"
+hyper = { version = "1.5.1", features = ["full"] }
+tokio = { version = "1.41.1", features = ["full"] }
+hyper-util = { version = "0.1.10", features = ["full"] }
+tower = "0.5.1"
