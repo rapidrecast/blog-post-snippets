@@ -1,13 +1,13 @@
-use std::fmt::{Display, Formatter};
+use crate::error::MyError;
 use futures::future::BoxFuture;
 use hyper::body::Incoming;
 use hyper::{Method, Request, Response};
+use std::fmt::Display;
 
-pub struct MyTowerService {
+/// An example of a bad tower-esque service that cannot be tested since it uses Incoming and that cannot be constructed directly
+pub struct BadTowerService {}
 
-}
-
-impl hyper::service::Service<Request<Incoming>> for MyTowerService {
+impl hyper::service::Service<Request<Incoming>> for BadTowerService {
     type Response = Response<String>;
     type Error = MyError;
     type Future = BoxFuture<'static, Result<Self::Response, Self::Error>>;
@@ -21,7 +21,7 @@ impl hyper::service::Service<Request<Incoming>> for MyTowerService {
                 }
                 Method::POST => {
                     println!("POST request");
-                    Err(MyError{payload: "POST is not allowed".to_string()})
+                    Err(MyError { payload: "POST is not allowed".to_string() })
                 }
                 _ => {
                     Err(MyError { payload: "Method not allowed".to_string() })
@@ -29,19 +29,4 @@ impl hyper::service::Service<Request<Incoming>> for MyTowerService {
             }
         })
     }
-}
-
-#[derive(Debug)]
-pub struct MyError {
-    payload: String,
-}
-
-impl Display for MyError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.write_fmt(format_args!("Error: {:?}", self))
-    }
-}
-
-impl std::error::Error for MyError {
-
 }
