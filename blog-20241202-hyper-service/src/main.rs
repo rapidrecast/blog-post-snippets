@@ -26,6 +26,7 @@ async fn bad_solution(listener: TcpListener) {
         tokio::spawn(async move {
             let tcp_stream = hyper_util::rt::TokioIo::new(tcp_stream);
             let http1_server = hyper::server::conn::http1::Builder::new()
+                .keep_alive(false)
                 .serve_connection(tcp_stream, BadTowerService {});
             let result = http1_server.await;
             if let Err(e) = result {
@@ -42,13 +43,14 @@ async fn good_solution(listener: TcpListener) {
         println!("Received connection from {addr:?}, spawning");
         tokio::spawn(async move {
             let tcp_stream = hyper_util::rt::TokioIo::new(tcp_stream);
-            let http1_server = hyper::server::conn::http1::Builder::new()
-                .serve_connection(tcp_stream, GoodTowerService {});
-            let result = http1_server.await;
+            let result = hyper::server::conn::http1::Builder::new()
+                .keep_alive(false)
+                .serve_connection(tcp_stream, GoodTowerService {}).await;
             if let Err(e) = result {
                 eprintln!("Error: {:?}", e);
             }
             println!("Finished serving connection for {addr:?}");
         });
+        // tokio::task::yield_now().await;
     }
 }

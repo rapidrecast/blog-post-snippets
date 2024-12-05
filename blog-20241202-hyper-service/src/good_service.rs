@@ -17,7 +17,7 @@ where
 {
     type Response = Response<String>;
     type Error = MyError;
-    type Future = Pin<Box<dyn Future<Output=Result<Self::Response, Self::Error>>>>;
+    type Future = Pin<Box<dyn Future<Output=Result<Self::Response, Self::Error>> + Send>>;
 
     fn call(&self, req: Request<BODY>) -> Self::Future {
         Box::pin(async move {
