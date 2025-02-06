@@ -11,6 +11,13 @@ mod error;
 
 #[tokio::main]
 async fn main() {
+    basic_example().await;
+    io_example().await;
+    channel_example().await;
+    handler_example().await;
+}
+
+async fn basic_example() {
     // Basic pattern of a layer accepting an input and giving an output
     // NOTE: this pattern is applied both to input and output.
     // In reality, it would be more likely to be applied to just one of them.
@@ -20,7 +27,9 @@ async fn main() {
     let output: u32 = basic_service.call(input).await.unwrap();
     assert_eq!(output, 5);
     println!("Basic pattern test passed");
+}
 
+async fn io_example() {
     // I/O pattern of a layer mediating protocol translation
     // It acts like a server layer would, accepting a read write pair,
     // and it acts like a client, sending a read write pair to the next layer
@@ -43,8 +52,14 @@ async fn main() {
     drop(this_read);
     task.await.unwrap().unwrap();
     println!("I/O pattern test passed");
+}
 
-    // Channel pattern
+async fn channel_example() {
+    todo!()
+}
+
+async fn handler_example() {
+    todo!()
 }
 
 async fn basic_service_fn(input: u16) -> Result<u32, ()> {
