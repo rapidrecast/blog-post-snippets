@@ -8,7 +8,7 @@ use tower::{Layer, Service};
 
 const MAX_BUF_SIZE: usize = 1024;
 
-pub struct IoTowerService<InnerService>
+pub struct IoPatternService<InnerService>
 where
 // We are explicit with the types, since we know the implementation we are providing downstream
 // However, the downstream service (such as another instance of this layer) can be generic
@@ -17,7 +17,7 @@ where
     inner: InnerService,
 }
 
-impl<InnerService, Reader, Writer> Service<(Reader, Writer)> for IoTowerService<InnerService>
+impl<InnerService, Reader, Writer> Service<(Reader, Writer)> for IoPatternService<InnerService>
 where
     InnerService: Service<(ReadHalf<SimplexStream>, WriteHalf<SimplexStream>), Response=()> + Clone + Send + 'static,
     InnerService::Future: Future<Output=Result<InnerService::Response, InnerService::Error>> + Send + 'static,
@@ -96,20 +96,20 @@ where
     }
 }
 
-/// I/O Tower Layer takes a (read, write) (as it would for servers) and will also send down
+/// I/O Pattern Layer takes a (read, write) (as it would for servers) and will also send down
 /// a (read, write) pair (as you would do for clients)
 #[derive(Default)]
-pub struct IoTowerLayer {}
+pub struct IoPatternLayer {}
 
-impl<InnerService> Layer<InnerService> for IoTowerLayer
+impl<InnerService> Layer<InnerService> for IoPatternLayer
 where
     InnerService: Service<(ReadHalf<SimplexStream>, WriteHalf<SimplexStream>), Response=()> + Clone + Send + 'static,
     InnerService::Future: Future<Output=Result<InnerService::Response, InnerService::Error>> + Send + 'static,
     InnerService::Error: Send + 'static,
 {
-    type Service = IoTowerService<InnerService>;
+    type Service = IoPatternService<InnerService>;
 
     fn layer(&self, inner: InnerService) -> Self::Service {
-        IoTowerService { inner }
+        IoPatternService { inner }
     }
 }
