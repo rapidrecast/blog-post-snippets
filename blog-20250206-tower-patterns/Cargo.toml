@@ -1,0 +1,8 @@
+[package]
+name = "blog-20250206-tower-patterns"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.43.0", features = ["full"] }
+tower = { version = "0.5.2", features = ["util"] }
